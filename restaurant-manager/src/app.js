@@ -11,9 +11,11 @@ import { requestLogger } from './middlewares/requestLogger.js';
 import { notFound } from './middlewares/notFound.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
-// 🔥 SWAGGER (AGREGADO)
+// Swagger configuration
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from '../swagger.js';
+
+// Route imports
 import restaurantRouter from './restaurant/restaurant.routes.js';
 import menuRouter from './menu/menu.routes.js';
 import orderRouter from './orders/order.routes.js';
@@ -23,35 +25,59 @@ import reportRouter from './reports/report.routes.js';
 
 const BASE_PATH = '/brasa33/v1';
 
-// route modules
-
+/**
+ * Configuración de middlewares globales
+ * @param {Express.Application} app - Instancia de Express
+ */
 const middlewares = (app) => {
+    // Body parsers
     app.use(express.urlencoded({extended: false, limit: '10mb'}));
     app.use(express.json({limit: '10mb'}));
+    
+    // Seguridad
     app.use(cors(corsOptions));
-    app.use(morgan('dev'));
     app.use(helmet(helmetOptions));
-    // log every request when not in production
+    
+    // Logging
+    app.use(morgan('dev'));
     app.use(requestLogger);
 };
 
+/**
+ * Configuración de rutas de la aplicación
+ * @param {Express.Application} app - Instancia de Express
+ */
 const routes = (app) => {
-
-    // 🔥 SWAGGER (AGREGADO)
+    // ========================================
+    // SWAGGER DOCUMENTATION
+    // ========================================
     app.use(
         `${BASE_PATH}/docs`,
         swaggerUi.serve,
-        swaggerUi.setup(swaggerSpec)
+        swaggerUi.setup(swaggerSpec, {
+            swaggerOptions: {
+                persistAuthorization: true,
+                tryItOutEnabled: true,
+            },
+        })
     );
 
-    app.get(`${BASE_PATH}/health`, (req, res) =>{
+    // ========================================
+    // HEALTH CHECK
+    // ========================================
+    app.get(`${BASE_PATH}/health`, (req, res) => {
         res.status(200).json({
+            success: true,
             status: 'healthy',
-            service: 'Brasa 33 Restaurant Manager Server'
-        })
-    })
+            service: 'Brasa 33 Restaurant Manager',
+            version: '1.0.0',
+            timestamp: new Date().toISOString(),
+        });
+    });
 
-    // core routes
+    // ========================================
+    // SERVICE ROUTES
+    // ========================================
     app.use(`${BASE_PATH}/restaurants`, restaurantRouter);
     app.use(`${BASE_PATH}/menu`, menuRouter);
     app.use(`${BASE_PATH}/orders`, orderRouter);
@@ -59,27 +85,48 @@ const routes = (app) => {
     app.use(`${BASE_PATH}/reservations`, reservationRouter);
     app.use(`${BASE_PATH}/reports`, reportRouter);
 
-    // catch-all for undefined rutas
+    // ========================================
+    // 404 HANDLER
+    // ========================================
     app.use(notFound);
 }
 
+/**
+ * Inicializa el servidor Express
+ * Establece conexión con BD y configura todos los middlewares y rutas
+ */
 export const initServer = async() => {
     const app = express();
-    const PORT = process.env.PORT;
+    const PORT = process.env.PORT || 3000;
+    
     app.set('trust proxy', 1);
 
-    try{
+    try {
+        // Conectar a base de datos
         await dbConnection();
+        
+        // Aplicar middlewares globales
         middlewares(app);
+        
+        // Configurar rutas
         routes(app);
-        // global error handler (must come after routes)
+        
+        // Global error handler (debe estar al final)
         app.use(errorHandler);
+        
+        // Iniciar servidor
         app.listen(PORT, () => {
-            console.log(`Brasa 33 Restaurant Manager API is running successfully`);
-            console.log(`Health check: http://localhost:${PORT}${BASE_PATH}/health`);
+            console.log('\n🚀 ==========================================');
+            console.log('   Brasa 33 Restaurant Manager API');
+            console.log('   ✅ Servidor iniciado exitosamente');
+            console.log('==========================================');
+            console.log(`📍 API: http://localhost:${PORT}${BASE_PATH}`);
+            console.log(`🏥 Health: http://localhost:${PORT}${BASE_PATH}/health`);
+            console.log(`📚 Swagger: http://localhost:${PORT}${BASE_PATH}/docs`);
+            console.log('==========================================\n');
         });
-    }catch(err){
-        console.error(`Error al iniciar el servidor: ${err.message}`)
+    } catch(err) {
+        console.error(`\n❌ Error al iniciar el servidor: ${err.message}`);
         process.exit(1);
     }
 };

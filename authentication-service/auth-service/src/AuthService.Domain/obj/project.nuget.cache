@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "mA8TcekDVA0=",
+  "dgSpecHash": "9c95a7U0dLo=",
   "success": true,
-  "projectFilePath": "C:\\la 33\\Brasa 33\\authentication-service\\auth-service\\src\\AuthService.Domain\\AuthService.Domain.csproj",
+  "projectFilePath": "C:\\trabajos\\Brasa-33\\authentication-service\\auth-service\\src\\AuthService.Domain\\AuthService.Domain.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\realice 4032\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512"
+    "C:\\Users\\elips\\.nuget\\packages\\system.componentmodel.annotations\\5.0.0\\system.componentmodel.annotations.5.0.0.nupkg.sha512"
   ],
   "logs": []
 }

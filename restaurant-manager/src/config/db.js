@@ -1,8 +1,16 @@
 'use strict';
 
+import 'dotenv/config';
 import pg from 'pg';
 
 const { Pool } = pg;
+
+const requiredEnv = ['PG_USER', 'PG_PASSWORD', 'PG_DATABASE'];
+for (const name of requiredEnv) {
+  if (!process.env[name]) {
+    throw new Error(`Missing required environment variable ${name}`);
+  }
+}
 
 export const pool = new Pool({
   host: process.env.PG_HOST || 'localhost',

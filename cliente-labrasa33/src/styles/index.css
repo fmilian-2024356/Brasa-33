@@ -1,0 +1,271 @@
+@import "tailwindcss";
+ 
+/* ─────────────────────────────────────────
+   La 33 — Design System
+   Dark culinary management app
+───────────────────────────────────────── */
+ 
+:root {
+  /* Backgrounds */
+  --bg:           #141416;
+  --bg-surface:   #1e1e22;
+  --bg-card:      #25252a;
+  --bg-hover:     #2e2e34;
+  --bg-input:     #1a1a1f;
+ 
+  /* Borders */
+  --border:       #35353c;
+  --border-light: #2a2a30;
+ 
+  /* Text */
+  --text:         #9ca3af;
+  --text-h:       #f0f0f2;
+  --text-muted:   #6b7280;
+ 
+  /* Accent — teal from the "Editar información" button */
+  --accent:       #4ecdc4;
+  --accent-hover: #3dbdb5;
+  --accent-bg:    rgba(78, 205, 196, 0.12);
+  --accent-border:rgba(78, 205, 196, 0.35);
+ 
+  /* Sidebar */
+  --sidebar-w:    264px;
+  --sidebar-bg:   #18181c;
+ 
+  /* Shadows */
+  --shadow-sm:    0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md:    0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg:    0 16px 48px rgba(0, 0, 0, 0.6);
+ 
+  /* Typography */
+  --sans:         'DM Sans', system-ui, sans-serif;
+  --heading:      'DM Sans', system-ui, sans-serif;
+  --mono:         ui-monospace, 'Cascadia Code', Consolas, monospace;
+ 
+  /* Base */
+  font: 16px / 1.6 var(--sans);
+  letter-spacing: 0.01em;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+ 
+/* ── Reset ────────────────────────────── */
+ 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+ 
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--text);
+}
+ 
+#root {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+ 
+/* ── Typography ───────────────────────── */
+ 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+ 
+h1 { font-size: clamp(28px, 4vw, 40px); }
+h2 { font-size: clamp(20px, 3vw, 28px); }
+h3 { font-size: clamp(16px, 2.5vw, 20px); }
+ 
+p {
+  margin: 0;
+  line-height: 1.6;
+}
+ 
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+ 
+a:hover {
+  color: var(--accent-hover);
+}
+ 
+/* ── Forms ────────────────────────────── */
+ 
+input,
+textarea,
+select {
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--text-h);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+ 
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+ 
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+ 
+/* ── Buttons ──────────────────────────── */
+ 
+button {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  transition: all 0.2s ease;
+}
+ 
+/* Primary — teal accent (e.g. "Editar información") */
+.btn-primary {
+  background: var(--accent);
+  color: #0d1f1e;
+  font-weight: 600;
+}
+ 
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 4px 16px rgba(78, 205, 196, 0.25);
+}
+ 
+/* Secondary / ghost */
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+}
+ 
+.btn-secondary:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-light);
+}
+ 
+/* Login button (light on dark card) */
+.btn-login {
+  background: #d4d4d8;
+  color: #111;
+  font-weight: 600;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+}
+ 
+.btn-login:hover {
+  background: #e4e4e8;
+}
+ 
+/* ── Cards / Surfaces ─────────────────── */
+ 
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+ 
+.surface {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+}
+ 
+/* ── Sidebar ──────────────────────────── */
+ 
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  min-height: 100svh;
+}
+ 
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin: 0 12px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+ 
+.sidebar-nav-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-h);
+}
+ 
+.sidebar-nav-item.active {
+  background: var(--bg-hover);
+  color: var(--text-h);
+}
+ 
+/* ── Accent dot (active branch indicator) */
+.dot-accent {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+ 
+/* ── Utility ──────────────────────────── */
+ 
+code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+}
+ 
+.text-muted  { color: var(--text-muted); }
+.text-accent { color: var(--accent); }
+.text-h      { color: var(--text-h); }
+ 
+/* Scrollbar (webkit) */
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }

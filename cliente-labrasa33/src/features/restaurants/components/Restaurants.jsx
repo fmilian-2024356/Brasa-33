@@ -1,119 +1,112 @@
 import { useEffect, useState } from 'react';
-import { useFieldsStore } from '../../users/store/adminStore';
+import { useRestaurantsStore } from '../store/useRestaurantStore.js';
 import { Spinner } from '../../auth/components/Spinner.jsx';
 import { RestaurantModal } from './RestaurantModal.jsx';
 import { useUIStore } from '../../auth/store/uiStore.js';
-import { useEffect as useToastEffect } from 'react';
 import { showError } from '../../../shared/utils/toast.js';
 
 export const Restaurants = () => {
-  const { fields, loading, error, getFields, deleteField } = useFieldsStore();
+  const { restaurants, loading, error, getRestaurants, deleteRestaurant } =
+    useRestaurantsStore();
+
   const [openModal, setOpenModal] = useState(false);
-  const [selectedField, setSelectedField] = useState(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+
   const { openConfirm } = useUIStore();
 
   useEffect(() => {
-    getFields();
-  }, [getFields]);
+    getRestaurants();
+  }, [getRestaurants]);
 
-  // Mostrar toast de error si existe
-  useToastEffect(() => {
+  useEffect(() => {
     if (error) showError(error);
   }, [error]);
 
   if (loading) return <Spinner />;
 
   return (
-    <div className='p-4'>
+    <div className="p-6 min-h-screen" style={{ background: '#0D0D0D' }}>
+
       {/* HEADER */}
-      <div className='flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8'>
+      <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className='text-3xl font-bold text-main-blue'>Gestión de Canchas</h1>
-          <p className='text-gray-500 text-sm'>Administra las canchas registradas</p>
+          <h1 className="text-3xl font-bold text-[#F2F2F2]">
+            Restaurantes
+          </h1>
+          <p className="text-[#A6A6A6] text-sm">
+            Administra los restaurantes
+          </p>
         </div>
 
         <button
-          className='bg-main-blue px-4 py-2 rounded text-white hover:opacity-90 transition'
+          className="px-4 py-2 rounded-lg font-semibold"
+          style={{
+            background: '#F2F2F2',
+            color: '#0D0D0D',
+          }}
           onClick={() => {
-            //setSelectedField(null);
+            setSelectedRestaurant(null);
             setOpenModal(true);
           }}
         >
-          + Agregar Campo
+          + Agregar Restaurante
         </button>
       </div>
 
-      {/* GRID RESPONSIVE */}
-      <div className='grid sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6'>
-        {fields.map((field) => (
+      {/* GRID */}
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {restaurants.map((r) => (
           <div
-            key={field._id}
-            className='bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:scale-[1.02]'
+            key={r.id}
+            className="rounded-2xl p-5 border"
+            style={{
+              background: '#1A1A1A',
+              borderColor: '#333333',
+            }}
           >
-            {/* IMAGEN */}
-            <div className='w-full h-52 bg-gray-100 flex items-center justify-center'>
-              <img
-                src={field.photo}
-                alt={field.fieldName}
-                className='max-h-full max-w-full object-contain rounded-t-xl'
-              />
-            </div>
+            <h2 className="text-xl font-bold text-[#F2F2F2]">{r.name}</h2>
 
-            {/* CONTENIDO */}
-            <div className='p-5'>
-              <h2 className='text-xl font-bold text-main-blue'>{field.fieldName}</h2>
+            <p className="text-[#A6A6A6] text-sm">{r.address}</p>
+            <p className="text-[#A6A6A6] text-sm">{r.phone}</p>
 
-              {/* BADGES */}
-              <div className='flex gap-2 mt-2 flex-wrap'>
-                <span className='px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-medium'>
-                  {field.capacity.replace('_', ' ')}
-                </span>
+            <div className="flex gap-3 mt-5">
+              <button
+                className="flex-1 py-2 rounded-lg"
+                style={{ background: '#333333', color: '#F2F2F2' }}
+                onClick={() => {
+                  setSelectedRestaurant(r);
+                  setOpenModal(true);
+                }}
+              >
+                Editar
+              </button>
 
-                <span className='px-3 py-1 text-xs rounded-full bg-green-100 text-green-700 font-medium'>
-                  Q{field.pricePerHour}/hora
-                </span>
-              </div>
-
-              {/* INFO */}
-              <p className='text-sm text-gray-400 mt-2 truncate'>ID: {field._id}</p>
-
-              {/* BOTONES */}
-              <div className='flex gap-3 mt-5'>
-                <button
-                  className='flex-1 py-2 rounded-lg bg-main-blue text-white font-medium hover:opacity-90 transition'
-                  onClick={() => {
-                    setSelectedField(field);
-                    setOpenModal(true);
-                  }}
-                >
-                  Editar
-                </button>
-
-                <button
-                  className='flex-1 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700 transition'
-                  onClick={() =>
-                    openConfirm({
-                      title: 'Eliminar campo',
-                      message: `¿Eliminar ${field.fieldName}?`,
-                      onConfirm: () => deleteField(field._id),
-                    })
-                  }
-                >
-                  Eliminar
-                </button>
-              </div>
+              <button
+                className="flex-1 py-2 rounded-lg"
+                style={{ background: '#7f1d1d', color: '#F2F2F2' }}
+                onClick={() =>
+                  openConfirm({
+                    title: 'Eliminar restaurante',
+                    message: `¿Eliminar ${r.name}?`,
+                    onConfirm: () => deleteRestaurant(r.id),
+                  })
+                }
+              >
+                Eliminar
+              </button>
             </div>
           </div>
         ))}
       </div>
 
+      {/* MODAL */}
       <RestaurantModal
         isOpen={openModal}
         onClose={() => {
           setOpenModal(false);
-          setSelectedField(null);
+          setSelectedRestaurant(null);
         }}
-        field={selectedField}
+        restaurant={selectedRestaurant}
       />
     </div>
   );

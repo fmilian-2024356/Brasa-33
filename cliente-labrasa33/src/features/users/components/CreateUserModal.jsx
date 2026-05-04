@@ -1,7 +1,13 @@
 import { useForm } from 'react-hook-form';
 import { Spinner } from '../../auth/components/Spinner.jsx';
 
-export const CreateUserModal = ({ isOpen, onClose, onCreate, loading, error }) => {
+export const CreateUserModal = ({
+  isOpen,
+  onClose,
+  onCreate,
+  loading,
+  error,
+}) => {
   const {
     register,
     handleSubmit,
@@ -14,17 +20,20 @@ export const CreateUserModal = ({ isOpen, onClose, onCreate, loading, error }) =
 
   const submit = async (values) => {
     const formData = new FormData();
+
     formData.append('name', values.name);
     formData.append('surname', values.surname);
     formData.append('username', values.username);
     formData.append('email', values.email);
     formData.append('password', values.password);
     formData.append('phone', values.phone);
+
     if (values.profilePicture?.[0]) {
       formData.append('profilePicture', values.profilePicture[0]);
     }
 
     const ok = await onCreate(formData);
+
     if (ok) {
       reset();
       onClose();
@@ -32,159 +41,216 @@ export const CreateUserModal = ({ isOpen, onClose, onCreate, loading, error }) =
   };
 
   return (
-    <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 px-3 sm:px-4'>
-      <div className='bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden'>
+    <div
+      className='fixed inset-0 flex justify-center items-center z-50 px-4'
+      style={{ background: 'rgba(13,13,13,0.85)' }}
+    >
+      <div
+        className='w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl overflow-hidden shadow-2xl'
+        style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border)',
+        }}
+      >
+        {/* HEADER */}
         <div
-          className='p-4 sm:p-5 text-white sticky top-0 z-10'
+          className='p-5 text-white'
           style={{
-            background: 'linear-gradient(90deg, var(--main-blue) 0%, #1956a3 100%)',
+            background:
+              'linear-gradient(90deg, var(--main-blue), #1956a3)',
           }}
         >
-          <h2 className='text-xl sm:text-2xl font-bold'>Nuevo Usuario</h2>
-          <p className='text-xs sm:text-sm opacity-80'>
+          <h2 className='text-xl font-bold'>Nuevo Usuario</h2>
+          <p className='text-sm opacity-80'>
             Completa la información para registrar un nuevo usuario
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(submit)} className='p-4 sm:p-6 space-y-4 overflow-y-auto'>
+        {/* FORM */}
+        <form
+          onSubmit={handleSubmit(submit)}
+          className='p-6 space-y-4 overflow-y-auto'
+        >
+          {/* NAME + SURNAME */}
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1.5'>Nombre</label>
+              <label className='text-sm text-[var(--text-muted)]'>
+                Nombre
+              </label>
               <input
-                {...register('name', { required: 'El nombre es obligatorio' })}
-                type='text'
-                className='w-full px-3 py-2 border rounded-lg'
+                {...register('name', {
+                  required: 'El nombre es obligatorio',
+                })}
+                className='w-full px-3 py-2 rounded-lg outline-none'
+                style={{
+                  background: '#333333',
+                  color: '#F2F2F2',
+                  border: '1px solid #333333',
+                }}
               />
-              {errors.name && <p className='text-red-600 text-xs'>{errors.name.message}</p>}
+              {errors.name && (
+                <p className='text-red-500 text-xs'>
+                  {errors.name.message}
+                </p>
+              )}
             </div>
+
             <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1.5'>Apellido</label>
+              <label className='text-sm text-[var(--text-muted)]'>
+                Apellido
+              </label>
               <input
                 {...register('surname', {
                   required: 'El apellido es obligatorio',
                 })}
-                type='text'
-                className='w-full px-3 py-2 border rounded-lg'
+                className='w-full px-3 py-2 rounded-lg outline-none'
+                style={{
+                  background: '#333333',
+                  color: '#F2F2F2',
+                  border: '1px solid #333333',
+                }}
               />
-              {errors.surname && <p className='text-red-600 text-xs'>{errors.surname.message}</p>}
-            </div>
-          </div>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1.5'>
-                Nombre de Usuario
-              </label>
-              <input
-                {...register('username', {
-                  required: 'El nombre de usuario es obligatorio',
-                  minLength: {
-                    value: 3,
-                    message: 'Debe tener al menos 3 caracteres',
-                  },
-                })}
-                type='text'
-                className='w-full px-3 py-2 border rounded-lg'
-              />
-              {errors.username && <p className='text-red-600 text-xs'>{errors.username.message}</p>}
-            </div>
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1.5'>Teléfono</label>
-              <input
-                {...register('phone', {
-                  required: 'El teléfono es obligatorio',
-                  pattern: {
-                    value: /^[0-9]{8}$/,
-                    message: 'Debe ser un número de 8 dígitos',
-                  },
-                })}
-                type='tel'
-                className='w-full px-3 py-2 border rounded-lg'
-              />
-              {errors.phone && <p className='text-red-600 text-xs'>{errors.phone.message}</p>}
-            </div>
-          </div>
-
-          <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1.5'>Email</label>
-            <input
-              {...register('email', {
-                required: 'El email es obligatorio',
-                pattern: {
-                  value: /^[^@\s]+@[^@\s]+\.[^@\s]+$/,
-                  message: 'Formato de email inválido',
-                },
-              })}
-              type='email'
-              className='w-full px-3 py-2 border rounded-lg'
-            />
-            {errors.email && <p className='text-red-600 text-xs'>{errors.email.message}</p>}
-          </div>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1.5'>Contraseña</label>
-              <input
-                {...register('password', {
-                  required: 'La contraseña es obligatoria',
-                  minLength: {
-                    value: 8,
-                    message: 'Debe tener al menos 8 caracteres',
-                  },
-                })}
-                type='password'
-                className='w-full px-3 py-2 border rounded-lg'
-              />
-              {errors.password && <p className='text-red-600 text-xs'>{errors.password.message}</p>}
-            </div>
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1.5'>
-                Confirmar contraseña
-              </label>
-              <input
-                {...register('confirmPassword', {
-                  required: 'Debe confirmar su contraseña',
-                  validate: {
-                    matchesPassword: (value) =>
-                      value === getValues('password') || 'Las contraseñas no coinciden',
-                  },
-                })}
-                type='password'
-                className='w-full px-3 py-2 border rounded-lg'
-              />
-              {errors.confirmPassword && (
-                <p className='text-red-600 text-xs'>{errors.confirmPassword.message}</p>
+              {errors.surname && (
+                <p className='text-red-500 text-xs'>
+                  {errors.surname.message}
+                </p>
               )}
             </div>
           </div>
 
+          {/* USER + PHONE */}
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div>
+              <label className='text-sm text-[var(--text-muted)]'>
+                Username
+              </label>
+              <input
+                {...register('username', {
+                  required: 'El username es obligatorio',
+                })}
+                className='w-full px-3 py-2 rounded-lg outline-none'
+                style={{
+                  background: '#333333',
+                  color: '#F2F2F2',
+                  border: '1px solid #333333',
+                }}
+              />
+            </div>
+
+            <div>
+              <label className='text-sm text-[var(--text-muted)]'>
+                Teléfono
+              </label>
+              <input
+                {...register('phone', {
+                  required: 'El teléfono es obligatorio',
+                })}
+                className='w-full px-3 py-2 rounded-lg outline-none'
+                style={{
+                  background: '#333333',
+                  color: '#F2F2F2',
+                  border: '1px solid #333333',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* EMAIL */}
           <div>
-            <label className='block text-sm font-medium text-gray-700 mb-1.5'>Foto de Perfil</label>
+            <label className='text-sm text-[var(--text-muted)]'>
+              Email
+            </label>
             <input
-              {...register('profilePicture')}
-              type='file'
-              accept='image/*'
-              className='w-full px-3 py-2 border rounded-lg'
+              {...register('email', {
+                required: 'El email es obligatorio',
+              })}
+              className='w-full px-3 py-2 rounded-lg outline-none'
+              style={{
+                background: '#333333',
+                color: '#F2F2F2',
+                border: '1px solid #333333',
+              }}
             />
           </div>
 
-          {error && <p className='text-red-600 text-sm text-center'>{error}</p>}
+          {/* PASSWORD */}
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+            <div>
+              <label className='text-sm text-[var(--text-muted)]'>
+                Contraseña
+              </label>
+              <input
+                type='password'
+                {...register('password', {
+                  required: 'La contraseña es obligatoria',
+                })}
+                className='w-full px-3 py-2 rounded-lg outline-none'
+                style={{
+                  background: '#333333',
+                  color: '#F2F2F2',
+                  border: '1px solid #333333',
+                }}
+              />
+            </div>
 
-          <div className='flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t'>
+            <div>
+              <label className='text-sm text-[var(--text-muted)]'>
+                Confirmar contraseña
+              </label>
+              <input
+                type='password'
+                {...register('confirmPassword', {
+                  validate: (v) =>
+                    v === getValues('password') ||
+                    'Las contraseñas no coinciden',
+                })}
+                className='w-full px-3 py-2 rounded-lg outline-none'
+                style={{
+                  background: '#333333',
+                  color: '#F2F2F2',
+                  border: '1px solid #333333',
+                }}
+              />
+            </div>
+          </div>
+
+          {/* FILE */}
+          <div>
+            <label className='text-sm text-[var(--text-muted)]'>
+              Foto de perfil
+            </label>
+            <input
+              type='file'
+              {...register('profilePicture')}
+              className='w-full px-3 py-2 rounded-lg'
+              style={{
+                background: '#333333',
+                color: '#F2F2F2',
+              }}
+            />
+          </div>
+
+          {error && (
+            <p className='text-red-500 text-sm text-center'>{error}</p>
+          )}
+
+          {/* ACTIONS */}
+          <div className='flex justify-end gap-3 pt-4 border-t border-[var(--border)]'>
             <button
               type='button'
               onClick={onClose}
-              className='w-full sm:w-auto px-4 py-2 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition'
+              className='px-4 py-2 rounded-lg text-[var(--text-muted)] hover:bg-white/5'
             >
               Cancelar
             </button>
+
             <button
               type='submit'
               disabled={loading}
-              className='w-full sm:w-auto px-5 py-2 rounded-lg text-white font-medium transition shadow disabled:opacity-60'
+              className='px-5 py-2 rounded-lg text-white font-medium'
               style={{
-                background: 'linear-gradient(90deg, var(--main-blue) 0%, #1956a3 100%)',
-                border: 'none',
+                background:
+                  'linear-gradient(90deg, var(--main-blue), #1956a3)',
               }}
             >
               {loading ? <Spinner small /> : 'Crear usuario'}

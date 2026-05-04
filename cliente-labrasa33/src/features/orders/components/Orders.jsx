@@ -1,34 +1,34 @@
 import { useEffect, useState } from 'react';
-import { useFieldsStore } from '../../users/store/adminStore';
+import { useOrdersStore } from '../store/useOrdersStore.js';
 import { useAuthStore } from '../../auth/store/authStore.js';
 import { Spinner } from '../../auth/components/Spinner.jsx';
 import { OrderModal } from './OrderModal.jsx';
 import { useUIStore } from '../../auth/store/uiStore.js';
-import { useEffect as useToastEffect } from 'react';
 import { showError } from '../../../shared/utils/toast.js';
 
 export const Orders = () => {
   const user = useAuthStore((state) => state.user);
-  const { fields, loading, error, getFields, deleteField } = useFieldsStore();
+
+  const { orders, loading, error, getOrders, deleteOrder } =
+    useOrdersStore();
+
   const [openModal, setOpenModal] = useState(false);
-  const [selectedField, setSelectedField] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
   const { openConfirm } = useUIStore();
 
   useEffect(() => {
-    if (user?.role === 'ADMIN_ROLE') {
-      getFields();
-    }
-  }, [getFields, user]);
+    if (user?.role === 'ADMIN_ROLE') getOrders();
+  }, [getOrders, user]);
 
-  useToastEffect(() => {
+  useEffect(() => {
     if (error) showError(error);
   }, [error]);
 
   if (user?.role !== 'ADMIN_ROLE') {
     return (
-      <div className='rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-[var(--text)]'>
-        <h2 className='text-2xl font-semibold text-[var(--text-h)]'>Acceso denegado</h2>
-        <p className='mt-3 text-sm text-[var(--text-muted)]'>Solo los administradores pueden ver esta sección.</p>
+      <div className="p-6 bg-[#111] text-white rounded-xl text-center border border-[#333]">
+        Acceso denegado
       </div>
     );
   }
@@ -36,80 +36,100 @@ export const Orders = () => {
   if (loading) return <Spinner />;
 
   return (
-    <div className='space-y-8'>
-      <div className='rounded-3xl border border-white/10 bg-white/5 p-8'>
-        <div className='flex flex-col gap-4 md:flex-row md:items-center md:justify-between'>
-          <div>
-            <h1 className='text-3xl font-semibold text-[var(--text-h)]'>Pedidos recientes</h1>
-            <p className='mt-1 text-sm text-[var(--text-muted)]'>Aquí puedes revisar pedidos y administrar el panel.</p>
-          </div>
-          <button
-            className='inline-flex items-center justify-center rounded-3xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-[#0d1f1e] transition hover:bg-[var(--accent-hover)]'
-            onClick={() => setOpenModal(true)}
-          >
-            + Agregar pedido
-          </button>
+    <div className="p-6 space-y-6 bg-[#0D0D0D] min-h-screen">
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center">
+
+        <div>
+          <h1 className="text-3xl font-bold text-white">
+            Pedidos
+          </h1>
+          <p className="text-gray-400 text-sm">
+            Gestión de órdenes
+          </p>
         </div>
+
+        <button
+          className="px-6 py-2 bg-white text-black font-bold rounded-lg hover:scale-105 transition"
+          onClick={() => {
+            setSelectedOrder(null);
+            setOpenModal(true);
+          }}
+        >
+          + Nuevo pedido
+        </button>
+
       </div>
 
-      <div className='grid gap-6 xl:grid-cols-2'>
-        {fields.length === 0 ? (
-          <div className='rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-[var(--text-muted)]'>
-            No hay pedidos disponibles. Crea uno nuevo para comenzar.
+      {/* LIST */}
+      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+
+        {orders.length === 0 ? (
+          <div className="col-span-full text-center text-gray-400">
+            No hay pedidos
           </div>
         ) : (
-          fields.map((field) => (
+          orders.map((o) => (
             <div
-              key={field._id}
-              className='overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[var(--shadow-sm)]'
+              key={o.id}
+              className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5"
             >
-              <div className='flex h-44 items-center justify-center bg-[var(--bg-hover)]'>
-                <img src={field.photo} alt={field.fieldName} className='h-full w-full object-cover' />
+
+              <h2 className="text-white font-bold">
+                Pedido #{o.id}
+              </h2>
+
+              <p className="text-gray-400 text-sm mt-1">
+                Estado: {o.status}
+              </p>
+
+              <div className="mt-3 text-white font-semibold">
+                Total: ${o.total}
               </div>
-              <div className='p-6'>
-                <h2 className='text-2xl font-semibold text-[var(--text-h)]'>{field.fieldName}</h2>
-                <p className='mt-2 text-sm text-[var(--text-muted)]'>{field.description || 'Descripción no disponible.'}</p>
-                <div className='mt-4 flex flex-wrap gap-3'>
-                  <span className='rounded-2xl bg-white/10 px-3 py-2 text-xs text-[var(--text-h)]'>Capacidad: {field.capacity.replace('_', ' ')}</span>
-                  <span className='rounded-2xl bg-white/10 px-3 py-2 text-xs text-[var(--text-h)]'>Q{field.pricePerHour}/hora</span>
-                </div>
-                <div className='mt-6 flex flex-col gap-3 sm:flex-row'>
-                  <button
-                    className='flex-1 rounded-3xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-[#0d1f1e] transition hover:bg-[var(--accent-hover)]'
-                    onClick={() => {
-                      setSelectedField(field);
-                      setOpenModal(true);
-                    }}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className='flex-1 rounded-3xl bg-rose-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-600'
-                    onClick={() =>
-                      openConfirm({
-                        title: 'Eliminar pedido',
-                        message: `¿Deseas eliminar ${field.fieldName}?`,
-                        onConfirm: () => deleteField(field._id),
-                      })
-                    }
-                  >
-                    Eliminar
-                  </button>
-                </div>
+
+              <div className="flex gap-2 mt-4">
+
+                <button
+                  className="flex-1 bg-white text-black py-2 rounded-lg font-semibold"
+                  onClick={() => {
+                    setSelectedOrder(o);
+                    setOpenModal(true);
+                  }}
+                >
+                  Ver
+                </button>
+
+                <button
+                  className="flex-1 bg-red-600 text-white py-2 rounded-lg"
+                  onClick={() =>
+                    openConfirm({
+                      title: 'Eliminar pedido',
+                      message: `¿Eliminar pedido #${o.id}?`,
+                      onConfirm: () => deleteOrder(o.id),
+                    })
+                  }
+                >
+                  Eliminar
+                </button>
+
               </div>
+
             </div>
           ))
         )}
+
       </div>
 
       <OrderModal
         isOpen={openModal}
         onClose={() => {
           setOpenModal(false);
-          setSelectedField(null);
+          setSelectedOrder(null);
         }}
-        field={selectedField}
+        order={selectedOrder}
       />
+
     </div>
   );
 };

@@ -13,9 +13,24 @@ export const AuthPage = () => {
           <div className='grid w-full max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr]'>
             <div className='rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_30px_120px_rgba(0,0,0,0.35)] backdrop-blur-xl'>
               <div className='flex flex-col items-center gap-4 text-center'>
-                <div className='flex h-20 w-20 items-center justify-center rounded-3xl bg-[var(--accent)] text-[#0d1f1e] text-3xl font-bold'>La</div>
-                <h1 className='text-3xl font-semibold text-[var(--text-h)]'>La 33</h1>
-                <p className='max-w-md text-sm text-[var(--text-muted)]'>Ingresa tus credenciales para acceder al panel de administración.</p>
+
+                <div className='flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 border border-white/10'>
+                  <img
+                    src='/src/assets/img/sarten33.png'
+                    alt='Logo La 33'
+                    className='h-14 w-14 object-contain'
+                  />
+                </div>
+
+                <h1 className='text-3xl font-semibold text-[var(--text-h)]'>
+                  La 33
+                </h1>
+
+                <p className='max-w-md text-sm text-[var(--text-muted)]'>
+                  {isForgot
+                    ? 'Recupera tu acceso al sistema ingresando tu correo.'
+                    : 'Ingresa tus credenciales para acceder al panel de administración.'}
+                </p>
               </div>
 
               <div className='mt-10'>
@@ -29,9 +44,15 @@ export const AuthPage = () => {
 
             <div className='flex items-center justify-center rounded-[32px] border border-white/10 bg-white/5 p-10 shadow-[0_30px_120px_rgba(0,0,0,0.18)] backdrop-blur-xl'>
               <div className='space-y-6 text-center'>
-                <p className='text-sm uppercase tracking-[0.35em] text-[var(--text-muted)]'>Bienvenido a</p>
-                <h2 className='text-4xl font-semibold text-[var(--text-h)]'>La 33</h2>
-                <p className='max-w-xl text-base text-[var(--text)]'>Disfruta de la experiencia culinaria, administra pedidos, restaurantes y usuarios desde un panel elegante y moderno.</p>
+
+                <p className='text-sm uppercase tracking-[0.35em] text-[var(--text-muted)]'>
+                  Bienvenido/a
+                </p>
+
+                <p className='max-w-xl text-base text-[var(--text)]'>
+                  Disfruta de la experiencia culinaria, administra pedidos, restaurantes y usuarios desde un panel elegante y moderno.
+                </p>
+
               </div>
             </div>
           </div>

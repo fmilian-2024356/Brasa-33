@@ -3,8 +3,8 @@ import { AuthPage } from '../../features/auth/pages/AuthPage.jsx';
 import { ProtecterRoute } from './ProtecterRoute.jsx';
 import { DashboardPage } from '../layouts/DashboardPage.jsx';
 import { RoleGuard } from './RoleGuard.jsx';
-import { Orders } from '../../features/orders/components/Orders.jsx';
 import { Restaurants } from '../../features/restaurants/components/Restaurants.jsx';
+import { Orders } from '../../features/orders/components/Orders.jsx';
 import { Users } from '../../features/users/components/Users.jsx';
 import { VerifyEmailPage } from '../../features/auth/pages/VerifyEmailPage.jsx';
 export const AppRouter = () => {
@@ -22,9 +22,9 @@ export const AppRouter = () => {
           </ProtecterRoute>
         }
       >
-        <Route index element={<Orders />} />
-        <Route path='orders' element={<Orders />} />
+        <Route index element={<Restaurants />} />
         <Route path='restaurants' element={<Restaurants />} />
+        <Route path='orders' element={<Orders />} />
         <Route path='users' element={<Users />} />
       </Route>
     </Routes>
